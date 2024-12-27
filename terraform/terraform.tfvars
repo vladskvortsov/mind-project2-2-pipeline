@@ -6,3 +6,5 @@ database_vars = {
 
   "REDIS_PORT" = "6379"
 }
+
+frontend_bucket_name = "project2-2-frontend"

@@ -1,7 +1,7 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "project2-1-vpc"
+  name = "project2-2-vpc"
   cidr = "10.0.0.0/16"
 
   azs             = ["${var.AWS_REGION}a", "${var.AWS_REGION}b", "${var.AWS_REGION}c"]
@@ -11,8 +11,8 @@ module "vpc" {
   enable_nat_gateway = true
 
   tags = {
-    Terraform   = "true"
     Environment = "prod"
+    Project     = "project2-2"
   }
 }
 
@@ -54,29 +54,9 @@ module "elasticache_sg" {
   egress_rules = ["all-all"]
 }
 
-# Security Group for ECS frontend service
-module "frontend_sg" {
-  source = "terraform-aws-modules/security-group/aws"
-
-  name   = "frontend-sg"
-  vpc_id = module.vpc.vpc_id
-
-  ingress_with_source_security_group_id = [
-
-    {
-      from_port                = 80
-      to_port                  = 80
-      protocol                 = "tcp"
-      source_security_group_id = module.alb.security_group_id
-    },
-  ]
-
-  egress_rules = ["all-all"]
-}
-
 # Security Group for ECS backend-rds service
 module "backend_rds_sg" {
-  depends_on = [module.frontend_sg]
+  depends_on = [module.alb]
   source     = "terraform-aws-modules/security-group/aws"
 
   name   = "backend-rds-sg"
@@ -87,7 +67,7 @@ module "backend_rds_sg" {
       from_port                = 8001
       to_port                  = 8001
       protocol                 = "tcp"
-      source_security_group_id = module.frontend_sg.security_group_id
+      source_security_group_id = module.alb.security_group_id
     },
   ]
 
@@ -96,7 +76,7 @@ module "backend_rds_sg" {
 
 # Security Group for ECS backend-redis service
 module "backend_redis_sg" {
-  depends_on = [module.frontend_sg]
+  depends_on = [module.alb]
   source     = "terraform-aws-modules/security-group/aws"
 
   name   = "backend-redis-sg"
@@ -107,7 +87,7 @@ module "backend_redis_sg" {
       from_port                = 8002
       to_port                  = 8002
       protocol                 = "tcp"
-      source_security_group_id = module.frontend_sg.security_group_id
+      source_security_group_id = module.alb.security_group_id
     },
   ]
   egress_rules = ["all-all"]
