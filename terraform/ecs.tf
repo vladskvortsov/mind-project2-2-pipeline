@@ -34,102 +34,6 @@ module "ecs_cluster" {
   }
 }
 
-# # Frontend ECS Service configuration
-# module "ecs_service_frontend" {
-#   source = "terraform-aws-modules/ecs/aws//modules/service"
-
-#   name        = "frontend"
-#   cluster_arn = module.ecs_cluster.arn
-
-#   # Task definition resource limits
-#   cpu    = 1024
-#   memory = 2048
-
-#   enable_execute_command = true
-
-#   # Container definition for the frontend service
-#   container_definitions = {
-#     frontend = {
-#       cpu       = 512
-#       memory    = 1024
-#       essential = true
-#       image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.AWS_REGION}.amazonaws.com/project2-2-frontend:latest"
-#       health_check = {
-#         # Verifies service health using a CURL command
-#         command = ["CMD-SHELL", "curl -f http://localhost:80 || exit 1"]
-#       }
-
-#       # Port mapping for the service
-#       port_mappings = [
-#         {
-#           name          = "frontend"
-#           containerPort = 80
-#           hostPort      = 80
-#           protocol      = "tcp"
-#         }
-#       ]
-
-#       readonly_root_filesystem  = false
-#       enable_cloudwatch_logging = true
-#       memory_reservation        = 100
-
-#       # Environment variables for the service
-#       environment = [
-#         { "name" : "BACKEND_RDS_URL", "value" : "http://backend-rds:8001/test_connection/" },
-#         { "name" : "BACKEND_REDIS_URL", "value" : "http://backend-redis:8002/test_connection/" }
-#       ]
-#     }
-#   }
-
-#   # Service discovery configuration for the service
-#   service_connect_configuration = {
-#     namespace = aws_service_discovery_http_namespace.project2-2.arn
-#     service = {
-#       client_alias = {
-#         port     = 80
-#         dns_name = "frontend"
-#       }
-#       port_name      = "frontend"
-#       discovery_name = "frontend"
-#     }
-#   }
-
-#   # Configures the load balancer for the service
-#   load_balancer = {
-#     service = {
-#       target_group_arn = module.alb.target_groups["frontend-tg"].arn
-#       container_name   = "frontend"
-#       container_port   = 80
-#     }
-#   }
-
-#   # IAM Role and Policies for ECS task
-#   tasks_iam_role_name = "ecr-pull-role"
-#   tasks_iam_role_policies = {
-#     ReadOnlyAccess = "arn:aws:iam::aws:policy/ReadOnlyAccess"
-#   }
-#   tasks_iam_role_statements = [
-#     {
-#       actions = [
-#         "ecr:GetAuthorizationToken",
-#         "ecr:BatchGetImage",
-#         "ecr:GetDownloadUrlForLayer",
-#       "ecr:BatchImportUpstreamImage"]
-#       resources = ["*"]
-#     }
-#   ]
-
-#   # Networking configuration for ECS task
-#   subnet_ids            = [module.vpc.private_subnets[0]]
-#   create_security_group = false
-#   security_group_ids    = [module.frontend_sg.security_group_id]
-
-#   tags = {
-#     Environment = "prod"
-#     Project     = "project2-2"
-#   }
-# }
-
 # backend-rds ECS Service configuration
 module "ecs_service_backend_rds" {
   source = "terraform-aws-modules/ecs/aws//modules/service"
@@ -393,8 +297,9 @@ module "alb" {
 
   }
 
-  # Target group configuration for the frontend service
   target_groups = {
+  
+  # Target group configuration for the backend-rds service
     backend-rds-tg = {
       backend_protocol                  = "HTTP"
       backend_port                      = 8001
@@ -417,7 +322,9 @@ module "alb" {
       # ECS will attach the task IPs to this target group
       create_attachment = false
     }
-    
+
+
+  # Target group configuration for the backend-redis service
     backend-redis-tg = {
       backend_protocol                  = "HTTP"
       backend_port                      = 8002
@@ -442,3 +349,4 @@ module "alb" {
     }
   }
 }
+

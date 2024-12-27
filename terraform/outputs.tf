@@ -14,9 +14,9 @@ variable "database_vars" {
   type = any
 }
 
-variable "frontend_bucket_name" {
-  type = string
-}
+# variable "frontend_bucket_name" {
+#   type = string
+# }
 
 output "alb_dns_name" {
   value = module.alb.dns_name
@@ -30,6 +30,6 @@ output "rds" {
   value = module.rds.db_instance_address
 }
 
-output "cloudfront_distribution_domain_name" {
-  value = module.cloudfront.cloudfront_distribution_domain_name
-}
+# output "cloudfront_distribution_domain_name" {
+#   value = module.cloudfront.cloudfront_distribution_domain_name
+# }

@@ -9,7 +9,7 @@ resource "aws_elasticache_parameter_group" "redis7" {
   }
 
   tags = {
-    Project     = "project2-1"
+    Project     = "project2-2"
     Environment = "prod"
   }
 

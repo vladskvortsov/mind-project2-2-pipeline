@@ -39,7 +39,7 @@ module "rds" {
   create_db_parameter_group = false
 
   tags = {
-    Project     = "project2-1"
+    Project     = "project2-2"
     Environment = "prod"
   }
 }
