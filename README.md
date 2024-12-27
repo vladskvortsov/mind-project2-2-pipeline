@@ -1,5 +1,5 @@
 # Cloudfront-ECS-RDS-Elasticache-Pipeline
-The pipeline deploys ECS services with prepared backend containers, and static frontend stored in s3 bucket behind the Cloudfront cache. Also RDS and Elasticache databases, using Terraform and GitHub acctions. All services are connected using Security Groups with least priveleges, and placed in the custom VPC. Docker containers are already prepared and stored in ECR. The applications code is stored in https://github.com/vladskvortsov/mind-project2-2 although as a CI workflow.
+The pipeline deploys ECS services with prepared backend containers, and static frontend stored in the s3 bucket behind the Cloudfront cache. Also RDS and Elasticache databases. For deploy automation Terraform and GitHub actions is used. All services are connected using Security Groups with least priveleges, and placed into custom VPC. Docker containers are already prepared and stored in the private ECR. The applications code is stored in https://github.com/vladskvortsov/mind-project2-2 although as a CI workflow.
 
 
 ## Technologies Used:
