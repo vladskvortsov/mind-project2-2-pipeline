@@ -86,6 +86,8 @@ module "ecs_service_backend_rds" {
         { "name" : "DB_PASSWORD", "value" : "${var.database_vars.DB_PASSWORD}" },
 
         { "name" : "DB_PORT", "value" : "${var.database_vars.DB_PORT}" },
+
+        { "name" : "CORS_ALLOWED_ORIGINS", "value" : "http://${module.alb.dns_name},http://${module.cloudfront.cloudfront_distribution_domain_name}" }
       ]
     }
   }
@@ -103,7 +105,7 @@ module "ecs_service_backend_rds" {
     }
   }
 
-#   # Configures the load balancer for the service
+  #   # Configures the load balancer for the service
   load_balancer = {
     service = {
       target_group_arn = module.alb.target_groups["backend-rds-tg"].arn
@@ -184,7 +186,10 @@ module "ecs_service_backend_redis" {
 
         { "name" : "REDIS_PORT", "value" : "${var.database_vars.REDIS_PORT}" },
 
-        { "name" : "REDIS_HOST", "value" : "${aws_elasticache_cluster.redis.cache_nodes[0].address}" }
+        { "name" : "REDIS_HOST", "value" : "${aws_elasticache_cluster.redis.cache_nodes[0].address}" },
+
+        { "name" : "CORS_ALLOWED_ORIGINS", "value" : "http://${module.alb.dns_name},http://${module.cloudfront.cloudfront_distribution_domain_name}" }
+
       ]
     }
   }
@@ -298,8 +303,8 @@ module "alb" {
   }
 
   target_groups = {
-  
-  # Target group configuration for the backend-rds service
+
+    # Target group configuration for the backend-rds service
     backend-rds-tg = {
       backend_protocol                  = "HTTP"
       backend_port                      = 8001
@@ -312,7 +317,7 @@ module "alb" {
         healthy_threshold   = 5
         interval            = 30
         matcher             = "200"
-        path                = "/"
+        path                = "/test_connection/"
         port                = "traffic-port"
         protocol            = "HTTP"
         timeout             = 5
@@ -324,7 +329,7 @@ module "alb" {
     }
 
 
-  # Target group configuration for the backend-redis service
+    # Target group configuration for the backend-redis service
     backend-redis-tg = {
       backend_protocol                  = "HTTP"
       backend_port                      = 8002
@@ -337,7 +342,7 @@ module "alb" {
         healthy_threshold   = 5
         interval            = 30
         matcher             = "200"
-        path                = "/"
+        path                = "/test_connection/"
         port                = "traffic-port"
         protocol            = "HTTP"
         timeout             = 5
