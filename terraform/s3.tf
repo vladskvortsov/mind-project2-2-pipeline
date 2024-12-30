@@ -13,6 +13,7 @@ module "s3-bucket_object" {
   file_source  = "../frontend/index.html"
   key          = "index.html"
   content_type = "html"
+  force_destroy = true
 }
 
 resource "local_file" "config_json" {
@@ -33,4 +34,6 @@ module "s3-bucket_object-2" {
   file_source  = "../frontend/config.json"
   key          = "config.json"
   content_type = "json"
+  force_destroy = true
+
 }
