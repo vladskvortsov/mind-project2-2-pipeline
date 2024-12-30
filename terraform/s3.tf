@@ -39,7 +39,6 @@ module "s3-bucket_object-2" {
   file_source  = "../frontend/config.json"
   key          = "config.json"
   content_type = "json"
-  
-  source_hash = filemd5("../frontend/config.json")
 
+  # source_hash = filemd5("../frontend/config.json")
 }
