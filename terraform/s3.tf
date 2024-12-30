@@ -2,6 +2,10 @@ module "s3_bucket" {
   source = "terraform-aws-modules/s3-bucket/aws"
 
   bucket = var.frontend_bucket_name
+  
+  versioning = {
+    enabled = true
+  }
 
 }
 
